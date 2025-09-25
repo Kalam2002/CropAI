@@ -11,7 +11,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useTransition } from 'react';
-import { sendContactEmail } from '@/ai';
+import { sendContactEmail } from '@/ai/flows/email';
+import type { SendContactEmailInput } from '@/ai/flows/email';
 
 const contactFormSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
@@ -39,7 +40,7 @@ export default function ContactPage() {
   const onSubmit = (data: ContactFormValues) => {
     startTransition(async () => {
       try {
-        const result = await sendContactEmail(data);
+        const result = await sendContactEmail(data as SendContactEmailInput);
         if (result.success) {
           toast({
             title: 'Message Sent!',

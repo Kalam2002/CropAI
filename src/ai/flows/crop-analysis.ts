@@ -91,7 +91,7 @@ Region: {{{region}}}
 Economic Data: {{{economicData}}}
 Region Photo: {{media url=cropImageUri}}
 
-Assess the feasibility of growing the specified crop in the given region, considering all available data. Provide a feasibility score, rationale, and recommendations.
+Assess the feasibility of growing the specified crop in the given region, a feasibility score, rationale, and recommendations.
 `,
   tools: [getWeatherDataTool]
 });
