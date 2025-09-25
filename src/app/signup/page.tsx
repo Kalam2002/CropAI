@@ -57,7 +57,7 @@ export default function SignupPage() {
               uid: user.uid,
               displayName: name,
               email: user.email,
-              createdAt: new Date(),
+              createdAt: new Date().toISOString(),
             }, { merge: true });
 
             toast({
@@ -105,7 +105,7 @@ export default function SignupPage() {
           uid: user.uid,
           displayName: user.displayName,
           email: user.email,
-          createdAt: new Date(),
+          createdAt: new Date().toISOString(),
           photoURL: user.photoURL,
         }, { merge: true });
 
