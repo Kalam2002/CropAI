@@ -26,17 +26,18 @@ export default function RootLayout({
       </head>
       <body className={cn('font-body antialiased', 'min-h-screen bg-background')}>
         <FirebaseClientProvider>
-          <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <header className="sticky top-0 z-50 w-full bg-green-800 text-white">
             <div className="container flex h-16 items-center">
               <Link href="/" className="mr-6 flex items-center">
-                <Leaf className="h-6 w-6 text-primary" />
+                <Leaf className="h-6 w-6 text-white" />
                 <span className="ml-2 text-xl font-bold">KrishiMitra</span>
               </Link>
               <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-                <Link href="/" className="transition-colors hover:text-foreground/80 text-foreground/60">Home</Link>
-                <Link href="/predict" className="transition-colors hover:text-foreground/80 text-foreground/60">Predict</Link>
-                <Link href="/about" className="transition-colors hover:text-foreground/80 text-foreground/60">About Us</Link>
-                <Link href="/contact" className="transition-colors hover:text-foreground/80 text-foreground/60">Contact</Link>
+                <Link href="/" className="transition-colors hover:text-white/80 text-white/90">Home</Link>
+                <Link href="/predict" className="transition-colors hover:text-white/80 text-white/90">Upload</Link>
+                <Link href="/predict" className="transition-colors hover:text-white/80 text-white/90">Predict</Link>
+                <Link href="/about" className="transition-colors hover:text-white/80 text-white/90">About Us</Link>
+                <Link href="/contact" className="transition-colors hover:text-white/80 text-white/90">Contact</Link>
               </nav>
               <div className="flex flex-1 items-center justify-end">
                 <UserNav />
