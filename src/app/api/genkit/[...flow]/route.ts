@@ -2,4 +2,6 @@
 import { nextHandler } from '@genkit-ai/next';
 import '@/ai';
 
-export const { POST } = nextHandler();
+// This is the correct and final syntax.
+// It exposes all Genkit flows as API endpoints.
+export const POST = nextHandler();
