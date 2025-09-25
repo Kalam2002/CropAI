@@ -1,6 +1,6 @@
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Search, FileText, LifeBuoy } from 'lucide-react';
 
 export default function Home() {
@@ -22,7 +22,7 @@ export default function Home() {
                 <Link href="/predict">
                   <Button
                     size="lg"
-                    className="bg-white text-green-700 hover:bg-gray-100"
+                    className="bg-white text-primary hover:bg-gray-100"
                   >
                     Get Started
                   </Button>
