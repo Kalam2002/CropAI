@@ -4,7 +4,8 @@ import { Leaf } from 'lucide-react';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import { FirebaseClientProvider } from '@/firebase/client-provider';
+import { UserNav } from '@/components/user-nav';
 
 export const metadata: Metadata = {
   title: 'KrishiMitra',
@@ -24,25 +25,27 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </head>
       <body className={cn('font-body antialiased', 'min-h-screen bg-background')}>
-        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="container flex h-16 items-center">
-            <Link href="/" className="mr-6 flex items-center">
-              <Leaf className="h-6 w-6 text-primary" />
-              <span className="ml-2 text-xl font-bold">KrishiMitra</span>
-            </Link>
-            <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-              <Link href="/" className="transition-colors hover:text-foreground/80 text-foreground/60">Home</Link>
-              <Link href="/predict" className="transition-colors hover:text-foreground/80 text-foreground/60">Predict</Link>
-              <Link href="#" className="transition-colors hover:text-foreground/80 text-foreground/60">About Us</Link>
-              <Link href="#" className="transition-colors hover:text-foreground/80 text-foreground/60">Contact</Link>
-            </nav>
-            <div className="flex flex-1 items-center justify-end">
-               <Button>Login</Button>
+        <FirebaseClientProvider>
+          <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <div className="container flex h-16 items-center">
+              <Link href="/" className="mr-6 flex items-center">
+                <Leaf className="h-6 w-6 text-primary" />
+                <span className="ml-2 text-xl font-bold">KrishiMitra</span>
+              </Link>
+              <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
+                <Link href="/" className="transition-colors hover:text-foreground/80 text-foreground/60">Home</Link>
+                <Link href="/predict" className="transition-colors hover:text-foreground/80 text-foreground/60">Predict</Link>
+                <Link href="#" className="transition-colors hover:text-foreground/80 text-foreground/60">About Us</Link>
+                <Link href="#" className="transition-colors hover:text-foreground/80 text-foreground/60">Contact</Link>
+              </nav>
+              <div className="flex flex-1 items-center justify-end">
+                <UserNav />
+              </div>
             </div>
-          </div>
-        </header>
-        {children}
-        <Toaster />
+          </header>
+          {children}
+          <Toaster />
+        </FirebaseClientProvider>
       </body>
     </html>
   );
