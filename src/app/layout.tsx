@@ -35,7 +35,7 @@ export default function RootLayout({
               <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
                 <Link href="/" className="transition-colors hover:text-foreground/80 text-foreground/60">Home</Link>
                 <Link href="/predict" className="transition-colors hover:text-foreground/80 text-foreground/60">Predict</Link>
-                <Link href="#" className="transition-colors hover:text-foreground/80 text-foreground/60">About Us</Link>
+                <Link href="/about" className="transition-colors hover:text-foreground/80 text-foreground/60">About Us</Link>
                 <Link href="#" className="transition-colors hover:text-foreground/80 text-foreground/60">Contact</Link>
               </nav>
               <div className="flex flex-1 items-center justify-end">
