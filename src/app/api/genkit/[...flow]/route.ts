@@ -1,5 +1,6 @@
 // src/app/api/genkit/[...flow]/route.ts
-import {nextHandler} from '@genkit-ai/next/server';
-import '@/ai';
+import { appRoute } from "@genkit-ai/next";
 
-export const POST = nextHandler();
+import '@/ai';
+export const POST = appRoute(yourFlow);
+export const GET = appRoute(yourFlow);
