@@ -5,7 +5,6 @@ import { FirebaseApp } from 'firebase/app';
 import { Firestore } from 'firebase/firestore';
 import { Auth, User, onAuthStateChanged } from 'firebase/auth';
 import { FirebaseErrorListener } from '@/components/FirebaseErrorListener'
-import { UserHookResult as UserHookResultFromAuth } from './auth/use-user';
 
 interface FirebaseProviderProps {
   children: ReactNode;

@@ -2,4 +2,4 @@
 import { nextHandler } from '@genkit-ai/next';
 import '@/ai';
 
-export const POST = nextHandler;
+export const { POST } = nextHandler();
