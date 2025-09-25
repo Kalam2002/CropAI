@@ -1,11 +1,11 @@
 'use client';
 
-import { useTransition } from 'react';
+import { useTransition, useEffect } from 'react';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { GoogleAuthProvider, signInWithPopup, updateProfile } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup, updateProfile, onAuthStateChanged, User } from 'firebase/auth';
 import { useAuth, useFirestore } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,8 +16,6 @@ import { Chrome, Leaf, Loader2 } from 'lucide-react';
 import { doc } from 'firebase/firestore';
 import { initiateEmailSignUp } from '@/firebase/non-blocking-login';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { useEffect } from 'react';
 
 
 const signupSchema = z.object({
@@ -44,38 +42,48 @@ export default function SignupPage() {
   });
 
   useEffect(() => {
+    // This listener handles profile updates for newly created users.
     const unsubscribe = onAuthStateChanged(auth, async (user: User | null) => {
-      if (user && user.displayName === null) { // New user created with email/password
+      // We only want to act if a user has just been created via email/password
+      // and their profile needs to be updated. A null displayName is a good indicator.
+      if (user && user.displayName === null && !user.photoURL) {
         const { name } = getValues();
-        try {
-          await updateProfile(user, { displayName: name });
-          const userRef = doc(firestore, 'users', user.uid);
-          setDocumentNonBlocking(userRef, {
-            uid: user.uid,
-            displayName: name,
-            email: user.email,
-            createdAt: new Date(),
-          }, { merge: true });
-          toast({
-            title: 'Account Created',
-            description: "You've been successfully signed up.",
-          });
-        } catch (error: any) {
-           toast({
-            variant: 'destructive',
-            title: 'Update Profile Failed',
-            description: error.message || 'Could not update profile.',
-          });
+        if (name) { // Ensure there's a name to set
+          try {
+            await updateProfile(user, { displayName: name });
+
+            const userRef = doc(firestore, 'users', user.uid);
+            setDocumentNonBlocking(userRef, {
+              uid: user.uid,
+              displayName: name,
+              email: user.email,
+              createdAt: new Date(),
+            }, { merge: true });
+
+            toast({
+              title: 'Account Created',
+              description: "You've been successfully signed up.",
+            });
+
+          } catch (error: any) {
+             toast({
+              variant: 'destructive',
+              title: 'Update Profile Failed',
+              description: error.message || 'Could not update your profile information.',
+            });
+          }
         }
       }
     });
 
+    // Cleanup the listener when the component unmounts
     return () => unsubscribe();
   }, [auth, firestore, toast, getValues]);
 
 
   const onSubmit = (data: FormData) => {
     startTransition(() => {
+      // This just initiates the creation. The onAuthStateChanged listener handles the post-creation logic.
       initiateEmailSignUp(auth, data.email, data.password);
       toast({
         title: 'Creating account...',
@@ -89,14 +97,16 @@ export default function SignupPage() {
       try {
         const provider = new GoogleAuthProvider();
         const userCredential = await signInWithPopup(auth, provider);
+        const user = userCredential.user;
 
-        const userRef = doc(firestore, 'users', userCredential.user.uid);
+        const userRef = doc(firestore, 'users', user.uid);
+        // For Google sign-in, we create the user document immediately
         setDocumentNonBlocking(userRef, {
-          uid: userCredential.user.uid,
-          displayName: userCredential.user.displayName,
-          email: userCredential.user.email,
+          uid: user.uid,
+          displayName: user.displayName,
+          email: user.email,
           createdAt: new Date(),
-          photoURL: userCredential.user.photoURL,
+          photoURL: user.photoURL,
         }, { merge: true });
 
         toast({
@@ -105,11 +115,19 @@ export default function SignupPage() {
         });
       } catch (error: any) {
         console.error(error);
-        toast({
-          variant: 'destructive',
-          title: 'Google Sign-In Failed',
-          description: error.message || 'An unexpected error occurred.',
-        });
+        if (error.code === 'auth/operation-not-allowed') {
+           toast({
+            variant: 'destructive',
+            title: 'Google Sign-In Not Enabled',
+            description: "Please enable Google Sign-In in your Firebase project's authentication settings.",
+          });
+        } else {
+          toast({
+            variant: 'destructive',
+            title: 'Google Sign-In Failed',
+            description: error.message || 'An unexpected error occurred.',
+          });
+        }
       }
     });
   };
