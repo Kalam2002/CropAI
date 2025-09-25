@@ -14,7 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { determineCropFeasibility, type DetermineCropFeasibilityOutput } from '@/ai/flows/determine-crop-feasibility';
+import { determineCropFeasibility, type DetermineCropFeasibilityOutput } from '@/ai';
 
 const feasibilitySchema = z.object({
   cropType: z.string().min(2, "Please enter a crop type."),

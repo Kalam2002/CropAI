@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useTransition } from 'react';
-import { sendContactEmail } from '@/ai/flows/send-contact-email';
+import { sendContactEmail } from '@/ai';
 
 const contactFormSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
@@ -134,7 +134,7 @@ export default function ContactPage() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel>Email</FormLabel>.
                         <FormControl>
                           <Input placeholder="name@example.com" {...field} />
                         </FormControl>

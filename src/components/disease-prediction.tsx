@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { predictCropDisease, type PredictCropDiseaseOutput } from '@/ai/flows/predict-crop-disease-from-image';
+import { predictCropDisease, type PredictCropDiseaseOutput } from '@/ai';
 
 export default function DiseasePrediction() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);

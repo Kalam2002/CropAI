@@ -13,7 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Badge } from '@/components/ui/badge';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { estimateCropYield, type EstimateCropYieldOutput } from '@/ai/flows/estimate-crop-yield';
+import { estimateCropYield, type EstimateCropYieldOutput } from '@/ai';
 
 const yieldPredictionSchema = z.object({
   cropType: z.string().min(2, "Please enter a crop type."),
