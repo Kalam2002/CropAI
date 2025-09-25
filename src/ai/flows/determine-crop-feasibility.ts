@@ -10,11 +10,11 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { getWeatherDataTool } from '../tools/get-weather-data';
 
 const DetermineCropFeasibilityInputSchema = z.object({
   cropType: z.string().describe('The type of crop to analyze for feasibility.'),
   region: z.string().describe('The geographical region where the crop will be grown.'),
-  environmentalData: z.string().describe('Environmental data for the region, such as rainfall, temperature, and soil quality.'),
   economicData: z.string().describe('Economic data relevant to crop production, such as market prices and input costs.'),
   cropImageUri: z
     .string()
@@ -41,14 +41,16 @@ const prompt = ai.definePrompt({
   output: {schema: DetermineCropFeasibilityOutputSchema},
   prompt: `You are an agricultural expert tasked with determining the feasibility of growing a specific crop in a given region.  Use the environmental data, economic data, and image of the region to determine the feasibility.
 
+You must use the getWeatherData tool to get the environmental data for the region.
+
 Crop Type: {{{cropType}}}
 Region: {{{region}}}
-Environmental Data: {{{environmentalData}}}
 Economic Data: {{{economicData}}}
 Region Photo: {{media url=cropImageUri}}
 
 Assess the feasibility of growing the specified crop in the given region, considering all available data. Provide a feasibility score, rationale, and recommendations.
 `,
+  tools: [getWeatherDataTool]
 });
 
 const determineCropFeasibilityFlow = ai.defineFlow(

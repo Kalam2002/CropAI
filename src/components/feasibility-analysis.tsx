@@ -19,7 +19,6 @@ import { determineCropFeasibility, type DetermineCropFeasibilityOutput } from '@
 const feasibilitySchema = z.object({
   cropType: z.string().min(2, "Please enter a crop type."),
   region: z.string().min(2, "Please enter a region."),
-  environmentalData: z.string().min(10, "Please provide environmental data."),
   economicData: z.string().min(10, "Please provide economic data."),
 });
 
@@ -35,7 +34,6 @@ export default function FeasibilityAnalysis() {
     defaultValues: {
       cropType: "",
       region: "",
-      environmentalData: "",
       economicData: "",
     },
   });
@@ -108,19 +106,6 @@ export default function FeasibilityAnalysis() {
                   <FormLabel>Region</FormLabel>
                   <FormControl>
                     <Input placeholder="e.g., Southern California" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="environmentalData"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Environmental Data</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="e.g., Avg. temp 20°C, low rainfall, loamy soil" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
