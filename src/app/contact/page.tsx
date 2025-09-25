@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useTransition } from 'react';
+import { sendContactEmail } from '@/ai/flows/send-contact-email';
 
 const contactFormSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
@@ -36,16 +37,26 @@ export default function ContactPage() {
   });
 
   const onSubmit = (data: ContactFormValues) => {
-    startTransition(() => {
-      // Simulate API call
-      setTimeout(() => {
-        console.log('Form submitted:', data);
+    startTransition(async () => {
+      try {
+        const result = await sendContactEmail(data);
+        if (result.success) {
+          toast({
+            title: 'Message Sent!',
+            description: "We've received your message and will get back to you shortly.",
+          });
+          form.reset();
+        } else {
+          throw new Error(result.error || 'An unknown error occurred.');
+        }
+      } catch (error: any) {
+        console.error('Form submission error:', error);
         toast({
-          title: 'Message Sent!',
-          description: "We've received your message and will get back to you shortly.",
+          variant: 'destructive',
+          title: 'Uh oh! Something went wrong.',
+          description: error.message || 'Could not send your message. Please try again later.',
         });
-        form.reset();
-      }, 1000);
+      }
     });
   };
 
