@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-1">
-        <section className="w-full py-20 md:py-32 lg:py-40 xl:py-48 deep-green-gradient text-white">
+        <section className="w-full py-20 md:py-32 lg:py-40 xl:py-48 bg-gradient-to-b from-primary to-primary/90 text-white">
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center space-y-4 text-center">
               <div className="space-y-2">
@@ -36,7 +36,7 @@ export default function Home() {
           <div className="container px-4 md:px-6">
             <div className="grid items-center gap-6 lg:grid-cols-3 lg:gap-12">
               <div className="flex flex-col justify-center space-y-4 text-center">
-                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/50">
                     <Search className="h-8 w-8 text-primary" />
                   </div>
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Quick Detection</h2>
@@ -45,7 +45,7 @@ export default function Home() {
                 </p>
               </div>
               <div className="flex flex-col justify-center space-y-4 text-center">
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/50">
                     <FileText className="h-8 w-8 text-primary" />
                 </div>
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Detailed Reports</h2>
@@ -54,7 +54,7 @@ export default function Home() {
                 </p>
               </div>
               <div className="flex flex-col justify-center space-y-4 text-center">
-                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/50">
                     <LifeBuoy className="h-8 w-8 text-primary" />
                  </div>
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Expert Support</h2>
