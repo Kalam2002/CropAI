@@ -1,12 +1,12 @@
 'use client';
 
-import { useTransition } from 'react';
+import { useTransition, useEffect } from 'react';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { useAuth } from '@/firebase';
+import { useAuth, useUser } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,6 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { Chrome, Leaf, Loader2 } from 'lucide-react';
 import { initiateEmailSignIn } from '@/firebase/non-blocking-login';
+import { useRouter } from 'next/navigation';
 
 const loginSchema = z.object({
   email: z.string().email({
@@ -28,6 +29,8 @@ type FormData = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const auth = useAuth();
+  const { user, isUserLoading } = useUser();
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
   const {
@@ -37,6 +40,12 @@ export default function LoginPage() {
   } = useForm<FormData>({
     resolver: zodResolver(loginSchema),
   });
+
+  useEffect(() => {
+    if (!isUserLoading && user) {
+      router.push('/');
+    }
+  }, [user, isUserLoading, router]);
 
   const onSubmit = (data: FormData) => {
     startTransition(() => {
@@ -69,6 +78,14 @@ export default function LoginPage() {
       }
     });
   };
+
+  if (isUserLoading || user) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Loader2 className="h-16 w-16 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="container relative flex h-[calc(100vh-4rem)] flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
