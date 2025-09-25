@@ -43,9 +43,6 @@ export interface FirebaseServicesAndUser {
   userError: Error | null;
 }
 
-// Re-exporting this type for consistency.
-export type UserHookResult = UserHookResultFromAuth;
-
 // React Context
 export const FirebaseContext = createContext<FirebaseContextState | undefined>(undefined);
 
