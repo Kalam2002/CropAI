@@ -36,7 +36,7 @@ export default function RootLayout({
                 <Link href="/" className="transition-colors hover:text-foreground/80 text-foreground/60">Home</Link>
                 <Link href="/predict" className="transition-colors hover:text-foreground/80 text-foreground/60">Predict</Link>
                 <Link href="/about" className="transition-colors hover:text-foreground/80 text-foreground/60">About Us</Link>
-                <Link href="#" className="transition-colors hover:text-foreground/80 text-foreground/60">Contact</Link>
+                <Link href="/contact" className="transition-colors hover:text-foreground/80 text-foreground/60">Contact</Link>
               </nav>
               <div className="flex flex-1 items-center justify-end">
                 <UserNav />
