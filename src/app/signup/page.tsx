@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, updateProfile } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup, updateProfile } from 'firebase/auth';
 import { useAuth, useFirestore } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,7 +13,12 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { Chrome, Leaf, Loader2 } from 'lucide-react';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc } from 'firebase/firestore';
+import { initiateEmailSignUp } from '@/firebase/non-blocking-login';
+import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { useEffect } from 'react';
+
 
 const signupSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -33,37 +38,49 @@ export default function SignupPage() {
     register,
     handleSubmit,
     formState: { errors },
+    getValues
   } = useForm<FormData>({
     resolver: zodResolver(signupSchema),
   });
 
-  const onSubmit = (data: FormData) => {
-    startTransition(async () => {
-      try {
-        const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
-        await updateProfile(userCredential.user, { displayName: data.name });
-
-        // Create a user document in Firestore
-        const userRef = doc(firestore, 'users', userCredential.user.uid);
-        await setDoc(userRef, {
-          uid: userCredential.user.uid,
-          displayName: data.name,
-          email: data.email,
-          createdAt: new Date(),
-        });
-
-        toast({
-          title: 'Account Created',
-          description: "You've been successfully signed up.",
-        });
-      } catch (error: any) {
-        console.error(error);
-        toast({
-          variant: 'destructive',
-          title: 'Sign-up Failed',
-          description: error.message || 'An unexpected error occurred.',
-        });
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user: User | null) => {
+      if (user && user.displayName === null) { // New user created with email/password
+        const { name } = getValues();
+        try {
+          await updateProfile(user, { displayName: name });
+          const userRef = doc(firestore, 'users', user.uid);
+          setDocumentNonBlocking(userRef, {
+            uid: user.uid,
+            displayName: name,
+            email: user.email,
+            createdAt: new Date(),
+          }, { merge: true });
+          toast({
+            title: 'Account Created',
+            description: "You've been successfully signed up.",
+          });
+        } catch (error: any) {
+           toast({
+            variant: 'destructive',
+            title: 'Update Profile Failed',
+            description: error.message || 'Could not update profile.',
+          });
+        }
       }
+    });
+
+    return () => unsubscribe();
+  }, [auth, firestore, toast, getValues]);
+
+
+  const onSubmit = (data: FormData) => {
+    startTransition(() => {
+      initiateEmailSignUp(auth, data.email, data.password);
+      toast({
+        title: 'Creating account...',
+        description: 'Please wait while we set things up for you.',
+      });
     });
   };
 
@@ -73,9 +90,8 @@ export default function SignupPage() {
         const provider = new GoogleAuthProvider();
         const userCredential = await signInWithPopup(auth, provider);
 
-        // Create a user document in Firestore if it's a new user
         const userRef = doc(firestore, 'users', userCredential.user.uid);
-        await setDoc(userRef, {
+        setDocumentNonBlocking(userRef, {
           uid: userCredential.user.uid,
           displayName: userCredential.user.displayName,
           email: userCredential.user.email,

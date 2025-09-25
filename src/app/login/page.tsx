@@ -2,11 +2,10 @@
 
 import { useTransition } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useAuth } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,6 +13,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { Chrome, Leaf, Loader2 } from 'lucide-react';
+import { initiateEmailSignIn } from '@/firebase/non-blocking-login';
 
 const loginSchema = z.object({
   email: z.string().email({
@@ -39,22 +39,14 @@ export default function LoginPage() {
   });
 
   const onSubmit = (data: FormData) => {
-    startTransition(async () => {
-      try {
-        await signInWithEmailAndPassword(auth, data.email, data.password);
-        toast({
-          title: 'Login Successful',
-          description: "You've been successfully logged in.",
-        });
-        // Redirect logic can be handled here or in a parent component observing auth state
-      } catch (error: any) {
-        console.error(error);
-        toast({
-          variant: 'destructive',
-          title: 'Login Failed',
-          description: error.message || 'An unexpected error occurred.',
-        });
-      }
+    startTransition(() => {
+      initiateEmailSignIn(auth, data.email, data.password);
+      // Non-blocking, so we don't await. We can show a toast optimistically.
+      // The onAuthStateChanged listener will handle the redirect or final state.
+      toast({
+        title: 'Signing in...',
+        description: 'Please wait while we check your credentials.',
+      });
     });
   };
 
