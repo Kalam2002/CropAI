@@ -111,3 +111,6 @@ const determineCropFeasibilityFlow = ai.defineFlow(
 export async function determineCropFeasibility(input: DetermineCropFeasibilityInput): Promise<DetermineCropFeasibilityOutput> {
   return determineCropFeasibilityFlow(input);
 }
+
+// Export the flow so it can be used in route.ts
+export const cropAnalysis = determineCropFeasibilityFlow;
