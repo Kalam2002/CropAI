@@ -1,0 +1,54 @@
+/**
+ * @file Firestore Security Rules
+ * @core_philosophy This ruleset enforces a strict user-ownership model for the /users collection,
+ * granting each authenticated user complete control over their own document. Data structure
+ * is flat, with each user document directly under the /users collection, identified by the
+ * user's unique ID.
+ * @data_structure All user data is stored directly under /users/{userId}.
+ * @key_security_decisions User listing is disallowed to protect user privacy. Write access to
+ * each document is limited to the authenticated user whose UID matches the document ID. There are
+ * no admin roles or shared access scenarios in this initial ruleset. The design maintains
+ * Authorization Independence.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Enforces access control for user documents.
+     * @path /users/{userId}
+     * @allow (create) Allow a user to create their own document if the userId matches their auth UID.
+     * @allow (get) Allow a user to read their own document.
+     * @allow (update) Allow a user to update their own document.
+     * @allow (delete) Allow a user to delete their own document.
+     * @deny (create) Deny creation if the userId does not match the auth UID.
+     * @deny (get) Deny read access if the userId does not match the auth UID.
+     * @deny (update) Deny update access if the userId does not match the auth UID.
+     * @deny (delete) Deny delete access if the userId does not match the auth UID.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId} {
+      // Helper function to check if the user is signed in
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      // Helper function to check if the requesting user is the owner of the document
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      // Helper function to check if the requesting user is the existing owner of the document
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+      
+      allow get: if isOwner(userId);
+      allow list: if false;
+
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
+    }
+  }
+}
